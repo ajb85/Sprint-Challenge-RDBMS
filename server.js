@@ -12,11 +12,14 @@ server.get("/", (req, res) => {
 
 server.get("/projects/:id", async (req, res) => {
   try {
-    const projects = await db("projects as p").where({
-      "p.id": req.params.id
+    const projects = await db("projects as p")
+      .where({
+        "p.id": req.params.id
+      })
+      .first();
+    const actions = await db("actions as a").where({
+      "a.project_id": req.params.id
     });
-    const actions = await db("actions as a").where({ "a.id": req.params.id });
-
     res.status(200).json({ ...projects, actions });
   } catch (err) {
     console.log(err);
