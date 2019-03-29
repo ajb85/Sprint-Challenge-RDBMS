@@ -27,7 +27,9 @@ server.get("/projects/:id", async (req, res) => {
 server.post("/projects", async (req, res) => {
   if (req.body.name && req.body.description) {
     try {
-      const id = await db.insert(req.body).into("projects");
+      const id = await db
+        .insert({ ...req.body, completed: false })
+        .into("projects");
       res.status(201).json({ id });
     } catch (err) {
       console.log(err);
@@ -37,6 +39,26 @@ server.post("/projects", async (req, res) => {
     }
   } else {
     res.status(400).json({ message: "Please include a name and description" });
+  }
+});
+
+server.post("/actions", async (req, res) => {
+  if (req.body.notes && req.body.description && req.body.project_id) {
+    try {
+      const id = await db
+        .insert({ ...req.body, completed: false })
+        .into("actions");
+      res.status(201).json({ id });
+    } catch (err) {
+      console.log(err);
+      res
+        .status(500)
+        .json({ message: "There was an error adding that action" });
+    }
+  } else {
+    res
+      .status(400)
+      .json({ message: "Please include a note, description, and project_id" });
   }
 });
 
